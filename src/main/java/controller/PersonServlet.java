@@ -17,6 +17,7 @@ import java.util.List;
 public class PersonServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private PersonDAO personDAO;
+    private static final int RECORDS_PER_PAGE = 5;
 
     public void init() {
         personDAO = new PersonDAO();
@@ -73,33 +74,54 @@ public class PersonServlet extends HttpServlet {
 
     private void listPersons(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        List<Person> listPerson;
+        int page = 1;
+        if (request.getParameter("page") != null) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
 
         String typeSearch = request.getParameter("searchtype");
         String keyword = request.getParameter("keyword");
         String sortBy = request.getParameter("sortby");
         String order = request.getParameter("order");
 
-        listPerson = personDAO.selectAllPersons();
+        List<Person> listPerson;
+        int totalRecords;
 
         if (typeSearch != null && keyword != null && !keyword.isEmpty()) {
             listPerson = searchPersons(typeSearch, keyword);
-        }
-
-        if (sortBy != null && order != null) {
+        } else if (sortBy != null && order != null) {
             listPerson = sortPersons(sortBy, order);
+        } else {
+            listPerson = personDAO.selectAllPersons();
         }
 
-        request.setAttribute("listPerson", listPerson);
+        totalRecords = listPerson.size();
+        int totalPages = (int) Math.ceil((double) totalRecords / RECORDS_PER_PAGE);
+
+        int start = (page - 1) * RECORDS_PER_PAGE;
+        int end = Math.min(start + RECORDS_PER_PAGE, totalRecords);
+
+        List<Person> pagePersons = listPerson.subList(start, end);
+
+        request.setAttribute("listPerson", pagePersons);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("recordsPerPage", RECORDS_PER_PAGE);
+        request.setAttribute("totalRecords", totalRecords);
+        request.setAttribute("searchtype", typeSearch);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("sortby", sortBy);
+        request.setAttribute("order", order);
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("view/list.jsp");
         dispatcher.forward(request, response);
     }
 
     private List<Person> searchPersons(String typeSearch, String keyword) throws SQLException {
         switch (typeSearch) {
-            case "Name":
+            case "name":
                 return personDAO.searchPersonsByName(keyword);
-            case "ID":
+            case "id":
                 return personDAO.searchPersonsById(keyword);
             default:
                 return personDAO.selectAllPersons();
@@ -138,7 +160,8 @@ public class PersonServlet extends HttpServlet {
         String gender = request.getParameter("gender");
         int age = Integer.parseInt(request.getParameter("age"));
         String inscription = request.getParameter("inscription");
-        Person newPerson = new Person(name, gender, age, inscription);
+        String image = request.getParameter("image");
+        Person newPerson = new Person(name, gender, age, inscription, image);
         personDAO.insertPerson(newPerson);
         response.sendRedirect("persons");
     }
@@ -150,7 +173,8 @@ public class PersonServlet extends HttpServlet {
         String gender = request.getParameter("gender");
         int age = Integer.parseInt(request.getParameter("age"));
         String inscription = request.getParameter("inscription");
-        Person updatedPerson = new Person(id, name, gender, age, inscription);
+        String image = request.getParameter("image");
+        Person updatedPerson = new Person(id, name, gender, age, inscription, image);
         personDAO.updatePerson(updatedPerson);
         response.sendRedirect("persons");
     }

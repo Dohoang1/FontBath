@@ -11,10 +11,10 @@ public class PersonDAO implements IPersonDAO {
     private String jdbcUsername = "root";
     private String jdbcPassword = "123456";
 
-    private static final String INSERT_PERSONS_SQL = "INSERT INTO persons (name, gender, age, inscription) VALUES (?, ?, ?, ?)";
-    private static final String SELECT_PERSON_BY_ID = "SELECT id, name, gender, age, inscription FROM persons WHERE id = ?";
+    private static final String INSERT_PERSONS_SQL = "INSERT INTO persons (name, gender, age, inscription, image) VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_PERSON_BY_ID = "SELECT id, name, gender, age, inscription, image FROM persons WHERE id = ?";
     private static final String SELECT_ALL_PERSONS = "SELECT * FROM persons";
-    private static final String UPDATE_PERSONS_SQL = "UPDATE persons SET name = ?, gender = ?, age = ?, inscription = ? WHERE id = ?";
+    private static final String UPDATE_PERSONS_SQL = "UPDATE persons SET name = ?, gender = ?, age = ?, inscription = ?, image = ? WHERE id = ?";
     private static final String DELETE_PERSONS_SQL = "DELETE FROM persons WHERE id = ?";
     private static final String SELECT_ALL_PERSONS_BY_NAME = "SELECT * FROM persons WHERE name LIKE ?";
     private static final String SELECT_ALL_PERSONS_BY_ID = "SELECT * FROM persons WHERE id LIKE ?";
@@ -42,6 +42,7 @@ public class PersonDAO implements IPersonDAO {
             preparedStatement.setString(2, person.getGender());
             preparedStatement.setInt(3, person.getAge());
             preparedStatement.setString(4, person.getInscription());
+            preparedStatement.setString(5, person.getImage());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             printSQLException(e);
@@ -60,7 +61,8 @@ public class PersonDAO implements IPersonDAO {
                 String gender = rs.getString("gender");
                 int age = rs.getInt("age");
                 String inscription = rs.getString("inscription");
-                person = new Person(id, name, gender, age, inscription);
+                String image = rs.getString("image");
+                person = new Person(id, name, gender, age, inscription, image);
             }
         } catch (SQLException e) {
             printSQLException(e);
@@ -80,7 +82,8 @@ public class PersonDAO implements IPersonDAO {
                 String gender = rs.getString("gender");
                 int age = rs.getInt("age");
                 String inscription = rs.getString("inscription");
-                persons.add(new Person(id, name, gender, age, inscription));
+                String image = rs.getString("image");
+                persons.add(new Person(id, name, gender, age, inscription, image));
             }
         } catch (SQLException e) {
             printSQLException(e);
@@ -113,7 +116,8 @@ public class PersonDAO implements IPersonDAO {
                     String gender = rs.getString("gender");
                     int age = rs.getInt("age");
                     String inscription = rs.getString("inscription");
-                    persons.add(new Person(id, name, gender, age, inscription));
+                    String image = rs.getString("image");
+                    persons.add(new Person(id, name, gender, age, inscription, image));
                 }
             }
         } catch (SQLException e) {
@@ -145,7 +149,8 @@ public class PersonDAO implements IPersonDAO {
                 String gender = rs.getString("gender");
                 int age = rs.getInt("age");
                 String inscription = rs.getString("inscription");
-                persons.add(new Person(id, name, gender, age, inscription));
+                String image = rs.getString("image");
+                persons.add(new Person(id, name, gender, age, inscription, image));
             }
         } catch (SQLException e) {
             printSQLException(e);
@@ -173,7 +178,8 @@ public class PersonDAO implements IPersonDAO {
             statement.setString(2, person.getGender());
             statement.setInt(3, person.getAge());
             statement.setString(4, person.getInscription());
-            statement.setInt(5, person.getId());
+            statement.setString(5, person.getImage());
+            statement.setInt(6, person.getId());
 
             rowUpdated = statement.executeUpdate() > 0;
         }

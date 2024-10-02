@@ -41,6 +41,12 @@
                 </td>
             </tr>
             <tr>
+                <th>Ảnh URL: </th>
+                <td>
+                    <input type="text" name="image" id="image">
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <input type="submit" value="Save">
                 </td>

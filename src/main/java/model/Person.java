@@ -6,24 +6,27 @@ public class Person {
     protected String gender;
     protected int age;
     protected String inscription;
+    protected String image;
 
     public Person() {}
 
-    public Person(String name, String gender, int age, String inscription) {
+    public Person(String name, String gender, int age, String inscription, String image) {
         super();
         this.name = name;
         this.gender = gender;
         this.age = age;
         this.inscription = inscription;
+        this.image = image;
     }
 
-    public Person(int id, String name, String gender, int age, String inscription) {
+    public Person(int id, String name, String gender, int age, String inscription, String image) {
         super();
         this.id = id;
         this.name = name;
         this.gender = gender;
         this.age = age;
         this.inscription = inscription;
+        this.image = image;
     }
 
     public int getId() {
@@ -64,5 +67,13 @@ public class Person {
 
     public void setInscription(String inscription) {
         this.inscription = inscription;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
