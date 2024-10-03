@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -55,6 +56,17 @@ public class PersonServlet extends HttpServlet {
         try {
             switch (action) {
                 case "create":
+                case "edit":
+                case "delete":
+                    if (!isAdminLoggedIn(request)) {
+                        response.sendRedirect("login.jsp");
+                        return;
+                    }
+                    break;
+            }
+
+            switch (action) {
+                case "create":
                     showNewForm(request, response);
                     break;
                 case "edit":
@@ -71,6 +83,12 @@ public class PersonServlet extends HttpServlet {
             throw new ServletException(ex);
         }
     }
+
+    private boolean isAdminLoggedIn(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("admin") != null;
+    }
+
 
     private void listPersons(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
